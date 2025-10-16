@@ -1,2 +1,3 @@
-# synapses
-A continuity software inspired b yapple's ecosystem.
+# Synapses
+
+Synapses is currently a apple ecosystem inspired project. Apple ecosystem but for brokies.
