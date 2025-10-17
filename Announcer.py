@@ -13,9 +13,9 @@ ip = socket.gethostbyname(socket.gethostname())
 # Define service info
 info = ServiceInfo(
     "_synapses._tcp.local.",
-    "SynapsesServer._synapses._tcp.local.",
+    "SynapsesLaptop._synapses._tcp.local.",
     addresses=[socket.inet_aton(ip)],
-    port=12345,
+    port=12355,
     properties={
         "version": 0.1,
         "device": "SynapsesServer",
@@ -25,7 +25,7 @@ info = ServiceInfo(
 )
 
 zeroconf = Zeroconf()
-print(f"Registering service on {ip}:12345")
+print(f"Registering service on {ip}:{info.port}")
 zeroconf.register_service(info)
 
 try:
