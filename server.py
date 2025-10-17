@@ -1,12 +1,13 @@
+# server.py (snippet)
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
 
 class Metadata(BaseModel):
-    battery: int
+    clipboard: str
 
 @app.post("/update_metadata")
 async def update(metadata: Metadata):
-    print(f"Received battery: {metadata.battery}")
-    return {"battery": metadata.battery}
+    print(f"Received clipboard: {metadata.clipboard}")
+    return {"received": metadata.clipboard}

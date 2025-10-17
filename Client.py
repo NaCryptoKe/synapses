@@ -35,7 +35,7 @@ listener = MyListener()
 browser = ServiceBrowser(zeroconf, "_synapses._tcp.local.", listener)
 
 # Start sending metadata in a separate thread
-threading.Thread(target=metaData.send_metadata, args=(listener,), daemon=True).start()
+threading.Thread(target=metaData.send_clipboard(listener), args=(listener,), daemon=True).start()
 
 try:
     input("Press Enter to exit...\n")

@@ -1,5 +1,6 @@
 import subprocess
 import platform
+import subprocess
 
 def get_clipboard():
     system = platform.system()
@@ -11,8 +12,7 @@ def get_clipboard():
             return pyperclip.paste()
         except ImportError:
             # Method 2: Using PowerShell
-            result = subprocess.run(['powershell', '-Command', 'Get-Clipboard'],
-                                    capture_output=True, text=True, shell=True)
+            result = subprocess.run('powershell -Command "Get-Clipboard"', capture_output=True, text=True, shell=True)
             return result.stdout.strip()
 
     elif system == "Linux":
