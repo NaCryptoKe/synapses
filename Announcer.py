@@ -28,6 +28,8 @@ zeroconf = Zeroconf()
 print(f"Registering service on {ip}:{info.port}")
 zeroconf.register_service(info)
 
+print(f"Registering service on {socket.gethostbyname(socket.gethostname())}:{info.port}")
+
 try:
     input("Press Enter to exit...\n")
 finally:

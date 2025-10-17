@@ -1,11 +1,7 @@
 from zeroconf import Zeroconf, ServiceBrowser
 import socket
+import threading
 import metaData
-
-# add_sevice when a new device is detected
-# remove_service when a device leaves the network
-# update_service when device info changes but the connection is still valid
-
 
 class MyListener:
     def __init__(self):
@@ -25,15 +21,21 @@ class MyListener:
             print(f"Device added: {name} at {ip}:{port}")
 
     def update_service(self, zeroconf, type, name):
-        print (f"Updating ... ")
+        info = zeroconf.get_service_info(type, name)
+        if info:
+            ip = socket.inet_ntoa(info.addresses[0])
+            port = info.port
+            self.devices[name] = {"ip": ip, "port": port, "info": info}
+            print(f"Device updated: {name} at {ip}:{port}")
 
 
-# Create Zeroconf instance and listener
+# Zeroconf setup
 zeroconf = Zeroconf()
 listener = MyListener()
 browser = ServiceBrowser(zeroconf, "_synapses._tcp.local.", listener)
 
-metaData.send_metadata(listener)
+# Start sending metadata in a separate thread
+threading.Thread(target=metaData.send_metadata, args=(listener,), daemon=True).start()
 
 try:
     input("Press Enter to exit...\n")
