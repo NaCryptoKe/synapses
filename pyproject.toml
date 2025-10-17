@@ -10,4 +10,5 @@ dependencies = [
     "python-multipart",
     "requests>=2.32.5",
     "zeroconf>=0.148.0",
+    "cryptography>=46.0.3",
 ]
