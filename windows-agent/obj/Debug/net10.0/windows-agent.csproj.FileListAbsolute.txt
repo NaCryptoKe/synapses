@@ -1,0 +1,15 @@
+D:\Projects\synapses\windows-agent\bin\Debug\net10.0\windows-agent.exe
+D:\Projects\synapses\windows-agent\bin\Debug\net10.0\windows-agent.deps.json
+D:\Projects\synapses\windows-agent\bin\Debug\net10.0\windows-agent.runtimeconfig.json
+D:\Projects\synapses\windows-agent\bin\Debug\net10.0\windows-agent.dll
+D:\Projects\synapses\windows-agent\bin\Debug\net10.0\windows-agent.pdb
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.AssemblyInfoInputs.cache
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.AssemblyInfo.cs
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.csproj.CoreCompileInputs.cache
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.sourcelink.json
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.dll
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\refint\windows-agent.dll
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.pdb
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\windows-agent.genruntimeconfig.cache
+D:\Projects\synapses\windows-agent\obj\Debug\net10.0\ref\windows-agent.dll
