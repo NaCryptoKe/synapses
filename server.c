@@ -1,40 +1,61 @@
 #include <stdio.h>
-#include <strings.h>
-#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
 #define PORT 5000
-#define MAXLINE 1000
+#define BUFFER_SIZE 1024
 
-int main()
-{
-  char buffer[100];
-  char *message = "Hello Client";
-  int listenfd, len;
-  struct sockaddr_in servaddr, cliaddr;
-  bzero(&servaddr, sizeof(servaddr));
+int main() {
+    int listenfd;
+    char buffer[BUFFER_SIZE];
+    const char *message = "Hello Client";
+    struct sockaddr_in servaddr, cliaddr;
+    socklen_t len;
 
-  // Create a UDP socket
-  listenfd = socket(AF_INET, SOCK_DGRAM, 0);
-  servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  servaddr.sin_port = htons(PORT);
-  servaddr.sin_family = AF_INET;
+    // Create UDP socket
+    if ((listenfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
 
-  // bind server address to socket descriptor
-  bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
+    memset(&servaddr, 0, sizeof(servaddr));
+    memset(&cliaddr, 0, sizeof(cliaddr));
 
-  // receive the datagram
-  len = sizeof(cliaddr);
-  int n = recvfrom(listenfd, buffer, sizeof(buffer),
-                   0, (struct sockaddr*)&cliaddr, &len);  // receive message from server
-  buffer[n] = '\0';
-  puts(buffer);
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(PORT);
 
-  // send the response
-  sendto(listenfd, message, strlen(message), 0,
-         (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+    // Bind socket
+    if (bind(listenfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+        perror("Bind failed");
+        close(listenfd);
+        exit(EXIT_FAILURE);
+    }
 
-  return 0;
+    len = sizeof(cliaddr);
+    
+    // Reserve 1 byte for null terminator
+    ssize_t n = recvfrom(listenfd, buffer, sizeof(buffer) - 1, 0, 
+                         (struct sockaddr *)&cliaddr, &len);
+    if (n < 0) {
+        perror("recvfrom failed");
+        close(listenfd);
+        exit(EXIT_FAILURE);
+    }
+
+    buffer[n] = '\0';
+    printf("Client says: %s\n", buffer);
+
+    // Send response
+    if (sendto(listenfd, message, strlen(message), 0, 
+               (struct sockaddr *)&cliaddr, len) < 0) {
+        perror("sendto failed");
+    }
+
+    close(listenfd);
+    return 0;
 }
