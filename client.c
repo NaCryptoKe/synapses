@@ -1,55 +1,46 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <arpa/inet.h>
+#include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 
-#define PORT 5000
-#define BUFFER_SIZE 1024
-
-int main() {
+int main(void) {
+    struct addrinfo hints, *res, *p;
     int sockfd;
-    char buffer[BUFFER_SIZE];
-    const char *message = "Hello Server";
-    struct sockaddr_in servaddr;
+    int status;
 
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("Socket creation failed");
-        exit(EXIT_FAILURE);
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if ((status = getaddrinfo("127.0.0.1", "3490", &hints, &res)) != 0) {
+        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+        return 1;
     }
 
-    memset(&servaddr, 0, sizeof(servaddr));
+    for (p = res; p != NULL; p = p->ai_next) {
+        // Create a socket
+        sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (sockfd < 0) {
+            continue;   // Failed try next address
+        }
 
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
-    
-    // Modern IP string parsing
-    if (inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr) <= 0) {
-        perror("Invalid address / Address not supported");
+        // Connect to server
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == 0) {
+            printf("Successfully connected to server on port 3490!\n");
+            break; // Success! Exit Loop
+        }
+
         close(sockfd);
-        exit(EXIT_FAILURE);
     }
 
-    // Send only actual string length
-    if (sendto(sockfd, message, strlen(message), 0, 
-               (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-        perror("sendto failed");
-        close(sockfd);
-        exit(EXIT_FAILURE);
+    if (p == NULL) {
+        fprintf(stderr, "Failed to connect to server\n");
+        return 2;
     }
 
-    socklen_t len = sizeof(servaddr);
-    ssize_t n = recvfrom(sockfd, buffer, sizeof(buffer) - 1, 0, 
-                         (struct sockaddr *)&servaddr, &len);
-    if (n < 0) {
-        perror("recvfrom failed");
-        close(sockfd);
-        exit(EXIT_FAILURE);
-    }
-
-    buffer[n] = '\0';
-    printf("Server response: %s\n", buffer);
+    freeaddrinfo(res);
 
     close(sockfd);
     return 0;
